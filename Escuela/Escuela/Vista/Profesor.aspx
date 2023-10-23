@@ -33,6 +33,9 @@
                     <asp:Button runat="server" ID="btn_actualizar" CssClass="btn form-control-sm btn-warning btn-margin" Text="Editar" OnClick="btn_actualizar_Click" />
                 </div>
             </div>
+            <div>
+                <asp:Label ID="lblMensaje" runat="server" Text=""></asp:Label>
+            </div>
         </div>
     </form>
 </body>

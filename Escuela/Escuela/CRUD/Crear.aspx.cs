@@ -38,6 +38,7 @@ namespace Escuela
             int idCurso = Convert.ToInt32(ddl_curso.SelectedValue);
             obtener_notas_actuales(idEstudiante, idCurso);
             subir_notas(idEstudiante, idCurso);
+
         }
 
         #region Metodos
@@ -59,71 +60,83 @@ namespace Escuela
         }
         void subir_notas(int Id_est, int Id_cur)
         {
-            decimal nNota1 = string.IsNullOrEmpty(txt_n1.Text) ? 0 : Convert.ToDecimal(txt_n1.Text);
-            decimal nNota2 = string.IsNullOrEmpty(txt_n2.Text) ? 0 : Convert.ToDecimal(txt_n2.Text);
-            decimal nNota3 = string.IsNullOrEmpty(txt_n3.Text) ? 0 : Convert.ToDecimal(txt_n3.Text);
-            decimal nExamen = string.IsNullOrEmpty(txt_examen.Text) ? 0 : Convert.ToDecimal(txt_examen.Text);
+            decimal nNota1 = !string.IsNullOrEmpty(txt_n1.Text) ? Convert.ToDecimal(txt_n1.Text) : 0;
+            decimal nNota2 = !string.IsNullOrEmpty(txt_n2.Text) ? Convert.ToDecimal(txt_n2.Text) : 0;
+            decimal nNota3 = !string.IsNullOrEmpty(txt_n3.Text) ? Convert.ToDecimal(txt_n3.Text) : 0;
+            decimal nExamen = !string.IsNullOrEmpty(txt_examen.Text) ? Convert.ToDecimal(txt_examen.Text) : 0;
 
-            if (nNota1 == nota1Actual || nNota2 == nota2Actual || nNota3 == nota3Actual || nExamen == examenActual)
+            int newNotId = -1;  // Valor predeterminado
+            con.Open();
+
+            // Insertar en tbl_nota
+            SqlCommand cmd = new SqlCommand("INSERT INTO tbl_nota ( not_nuno, not_ndos, not_ntres, not_examen) VALUES(@nuevo_not_nuno, @nuevo_not_ndos, @nuevo_not_ntres, @nuevo_not_examen);", con);
+            cmd.Parameters.AddWithValue("@nuevo_not_nuno", nNota1);
+            cmd.Parameters.AddWithValue("@nuevo_not_ndos", nNota2);
+            cmd.Parameters.AddWithValue("@nuevo_not_ntres", nNota3);
+            cmd.Parameters.AddWithValue("@nuevo_not_examen", nExamen);
+
+            SqlCommand getIdCmd = new SqlCommand("SELECT SCOPE_IDENTITY()", con);
+            object result = getIdCmd.ExecuteScalar();
+            if (result != null && result != DBNull.Value)
             {
-                ScriptManager.RegisterStartupScript(this, this.GetType(), "showAlert", "mostrarAlerta('No se puede hacer cambios en las notas.');", true);
+                newNotId = Convert.ToInt32(result);
+            }
+
+            SqlCommand updateEstudianteCmd = new SqlCommand("UPDATE tbl_estudiante SET not_id = @notId WHERE est_id = @estudianteId", con);
+            updateEstudianteCmd.Parameters.AddWithValue("@notId", newNotId);
+            updateEstudianteCmd.Parameters.AddWithValue("@estudianteId", Id_est);
+
+            int rowsAffected = cmd.ExecuteNonQuery();
+            // Obtener el nuevo not_id insertado
+
+            if (rowsAffected > 0)
+            {
+                ScriptManager.RegisterStartupScript(this, this.GetType(), "showAlert", "mostrarAlerta('Notas actualizadas con éxito.');", true);
+
             }
             else
             {
-                con.Open();
+                ScriptManager.RegisterStartupScript(this, this.GetType(), "showAlert", "mostrarAlerta('Error al actualizar las notas.');", true);
+            }
 
-                // Insertar en tbl_nota
-                SqlCommand cmd = new SqlCommand("INSERT INTO tbl_nota (est_id, cur_id, not_nuno, not_ndos, not_ntres, not_examen) VALUES(@estudiante_id, @curso_id, @nuevo_not_nuno, @nuevo_not_ndos, @nuevo_not_ntres, @nuevo_not_examen); SELECT SCOPE_IDENTITY();", con);
-                cmd.Parameters.AddWithValue("@estudiante_id", Id_est);
-                cmd.Parameters.AddWithValue("@curso_id", Id_cur);
-                cmd.Parameters.AddWithValue("@nuevo_not_nuno", nNota1);
-                cmd.Parameters.AddWithValue("@nuevo_not_ndos", nNota2);
-                cmd.Parameters.AddWithValue("@nuevo_not_ntres", nNota3);
-                cmd.Parameters.AddWithValue("@nuevo_not_examen", nExamen);
+            con.Close();
+        }
+        void actualizar_not_id_en_estudiante(int id_estudiante, int id_curso, int nuevo_not_id)
+        {
+            con.Open();
 
-                // Obtener el nuevo not_id insertado
-                int newNotId = Convert.ToInt32(cmd.ExecuteScalar());
+            // Primero verifica si existe un registro para el estudiante en el curso
+            SqlCommand verificaEstudianteCmd = new SqlCommand("SELECT COUNT(*) FROM tbl_estudiante WHERE est_id = @id_estudiante AND cur_id = @id_curso", con);
+            verificaEstudianteCmd.Parameters.AddWithValue("@id_estudiante", id_estudiante);
+            verificaEstudianteCmd.Parameters.AddWithValue("@id_curso", id_curso);
 
-                int rowsAffected = newNotId > 0 ? 1 : 0;
+            int count = (int)verificaEstudianteCmd.ExecuteScalar();
 
-                if (rowsAffected > 0)
+            if (count > 0)
+            {
+                // Actualiza el campo not_id en tbl_estudiante
+                SqlCommand actualizaEstudianteCmd = new SqlCommand("UPDATE tbl_estudiante SET not_id = @nuevo_not_id WHERE est_id = @id_estudiante AND cur_id = @id_curso", con);
+                actualizaEstudianteCmd.Parameters.AddWithValue("@nuevo_not_id", nuevo_not_id);
+                actualizaEstudianteCmd.Parameters.AddWithValue("@id_estudiante", id_estudiante);
+                actualizaEstudianteCmd.Parameters.AddWithValue("@id_curso", id_curso);
+
+                int filas_afectadas = actualizaEstudianteCmd.ExecuteNonQuery();
+
+                if (filas_afectadas > 0)
                 {
-                    ScriptManager.RegisterStartupScript(this, this.GetType(), "showAlert", "mostrarAlerta('Notas actualizadas con éxito.');", true);
-                    // Actualiza las notas actuales
-                    nota1Actual = nNota1;
-                    nota2Actual = nNota2;
-                    nota3Actual = nNota3;
-                    examenActual = nExamen;
-
-                    // Ahora, actualiza el not_id en tbl_estudiante si es necesario
-                    // Verifica si existe un registro en tbl_estudiante con los valores de cur_id y usu_id
-                    SqlCommand checkEstudianteCmd = new SqlCommand("SELECT est_id FROM tbl_estudiante WHERE cur_id = @curso_id AND usu_id = @estudiante_id", con);
-                    checkEstudianteCmd.Parameters.AddWithValue("@curso_id", Id_cur);
-                    checkEstudianteCmd.Parameters.AddWithValue("@estudiante_id", Id_est);
-                    int estudianteId = -1;  // Valor predeterminado
-
-                    SqlDataReader estudianteReader = checkEstudianteCmd.ExecuteReader();
-                    if (estudianteReader.Read())
-                    {
-                        estudianteId = (int)estudianteReader["est_id"];
-                    }
-                    estudianteReader.Close();
-
-                    if (estudianteId > 0)
-                    {
-                        // Actualiza el not_id en tbl_estudiante
-                        SqlCommand updateEstudianteCmd = new SqlCommand("UPDATE tbl_estudiante SET not_id = @notId WHERE est_id = @estId", con);
-                        updateEstudianteCmd.Parameters.AddWithValue("@notId", newNotId);
-                        updateEstudianteCmd.Parameters.AddWithValue("@estId", estudianteId);
-
-                        updateEstudianteCmd.ExecuteNonQuery();
-                    }
+                    ScriptManager.RegisterStartupScript(this, this.GetType(), "showAlert", "mostrarAlerta('not_id en tbl_estudiante actualizado con éxito.');", true);
                 }
                 else
                 {
-                    ScriptManager.RegisterStartupScript(this, this.GetType(), "showAlert", "mostrarAlerta('Error al actualizar las notas.');", true);
+                    ScriptManager.RegisterStartupScript(this, this.GetType(), "showAlert", "mostrarAlerta('Error al actualizar not_id en tbl_estudiante.');", true);
                 }
             }
+            else
+            {
+                ScriptManager.RegisterStartupScript(this, this.GetType(), "showAlert", "mostrarAlerta('El estudiante no está inscrito en el curso seleccionado.');", true);
+            }
+
+            con.Close();
         }
 
         void cargar_ddl()

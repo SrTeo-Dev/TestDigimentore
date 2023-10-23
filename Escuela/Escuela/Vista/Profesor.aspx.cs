@@ -15,7 +15,10 @@ namespace Escuela.Vista
 
         protected void Page_Load(object sender, EventArgs e)
         {
-            CargarTabla();
+            if (!Page.IsPostBack)
+            {
+                CargarTabla();
+            }
         }
 
         private void CargarTabla()

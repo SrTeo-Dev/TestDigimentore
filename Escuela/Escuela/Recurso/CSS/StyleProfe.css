@@ -11,3 +11,9 @@
 .cu-margin{
     margin: auto;
 }
+#lblMensaje {
+    color: #FF0000; /* Color de fuente rojo */
+    font-size: 28px; /* Tamaño de fuente 28px */
+    font-weight: bold; /* Texto en negrita */
+    margin-top: 10px; /* Espacio superior de 10px */
+}
