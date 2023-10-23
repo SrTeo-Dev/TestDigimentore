@@ -80,65 +80,29 @@ namespace Escuela
             if (result != null && result != DBNull.Value)
             {
                 newNotId = Convert.ToInt32(result);
-            }
 
-            SqlCommand updateEstudianteCmd = new SqlCommand("UPDATE tbl_estudiante SET not_id = @notId WHERE est_id = @estudianteId", con);
-            updateEstudianteCmd.Parameters.AddWithValue("@notId", newNotId);
-            updateEstudianteCmd.Parameters.AddWithValue("@estudianteId", Id_est);
+                SqlCommand updateEstudianteCmd = new SqlCommand("UPDATE tbl_estudiante SET not_id = @notId WHERE est_id = @estudianteId", con);
+                updateEstudianteCmd.Parameters.AddWithValue("@notId", newNotId);
+                updateEstudianteCmd.Parameters.AddWithValue("@estudianteId", Id_est);
 
-            int rowsAffected = cmd.ExecuteNonQuery();
-            // Obtener el nuevo not_id insertado
+                int rowsAffected = cmd.ExecuteNonQuery();
+                // Obtener el nuevo not_id insertado
 
-            if (rowsAffected > 0)
-            {
-                ScriptManager.RegisterStartupScript(this, this.GetType(), "showAlert", "mostrarAlerta('Notas actualizadas con éxito.');", true);
-
-            }
-            else
-            {
-                ScriptManager.RegisterStartupScript(this, this.GetType(), "showAlert", "mostrarAlerta('Error al actualizar las notas.');", true);
-            }
-
-            con.Close();
-        }
-        void actualizar_not_id_en_estudiante(int id_estudiante, int id_curso, int nuevo_not_id)
-        {
-            con.Open();
-
-            // Primero verifica si existe un registro para el estudiante en el curso
-            SqlCommand verificaEstudianteCmd = new SqlCommand("SELECT COUNT(*) FROM tbl_estudiante WHERE est_id = @id_estudiante AND cur_id = @id_curso", con);
-            verificaEstudianteCmd.Parameters.AddWithValue("@id_estudiante", id_estudiante);
-            verificaEstudianteCmd.Parameters.AddWithValue("@id_curso", id_curso);
-
-            int count = (int)verificaEstudianteCmd.ExecuteScalar();
-
-            if (count > 0)
-            {
-                // Actualiza el campo not_id en tbl_estudiante
-                SqlCommand actualizaEstudianteCmd = new SqlCommand("UPDATE tbl_estudiante SET not_id = @nuevo_not_id WHERE est_id = @id_estudiante AND cur_id = @id_curso", con);
-                actualizaEstudianteCmd.Parameters.AddWithValue("@nuevo_not_id", nuevo_not_id);
-                actualizaEstudianteCmd.Parameters.AddWithValue("@id_estudiante", id_estudiante);
-                actualizaEstudianteCmd.Parameters.AddWithValue("@id_curso", id_curso);
-
-                int filas_afectadas = actualizaEstudianteCmd.ExecuteNonQuery();
-
-                if (filas_afectadas > 0)
+                if (rowsAffected > 0)
                 {
-                    ScriptManager.RegisterStartupScript(this, this.GetType(), "showAlert", "mostrarAlerta('not_id en tbl_estudiante actualizado con éxito.');", true);
+                    ScriptManager.RegisterStartupScript(this, this.GetType(), "showAlert", "mostrarAlerta('Notas actualizadas con éxito.');", true);
+
                 }
                 else
                 {
-                    ScriptManager.RegisterStartupScript(this, this.GetType(), "showAlert", "mostrarAlerta('Error al actualizar not_id en tbl_estudiante.');", true);
+                    ScriptManager.RegisterStartupScript(this, this.GetType(), "showAlert", "mostrarAlerta('Error al actualizar las notas.');", true);
                 }
             }
-            else
-            {
-                ScriptManager.RegisterStartupScript(this, this.GetType(), "showAlert", "mostrarAlerta('El estudiante no está inscrito en el curso seleccionado.');", true);
-            }
+
+           
 
             con.Close();
         }
-
         void cargar_ddl()
         {
             con.Open();
