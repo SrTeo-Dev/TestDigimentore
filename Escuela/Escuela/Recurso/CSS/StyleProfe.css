@@ -1,0 +1,13 @@
+﻿body {
+    background-image: url(../img/fondo_profe.jpg);
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    background-size: cover;
+    color: #ffffff;
+}
+.btn-margin {
+    margin-right: 100px;
+}
+.cu-margin{
+    margin: auto;
+}
