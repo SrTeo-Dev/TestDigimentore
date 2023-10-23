@@ -19,7 +19,7 @@ namespace Escuela
                 cargar_ddl();
             }
         }
-        
+
         protected void btn_buscar_Click(object sender, EventArgs e)
         {
             verificar_alumno();
@@ -50,21 +50,21 @@ namespace Escuela
             decimal nExamen = string.IsNullOrEmpty(txt_examen.Text) ? 0 : Convert.ToDecimal(txt_examen.Text);
             try
             {
-                    con.Open();
-                    using (SqlCommand cmd = new SqlCommand("UPDATE tbl_nota SET not_nuno = @nuevo_not_nuno, not_ndos = @nuevo_not_ndos, not_ntres = @nuevo_not_ntres, not_examen = @nuevo_not_examen WHERE not_id IN(SELECT n.not_id FROM tbl_estudiante e INNER JOIN tbl_nota n ON e.est_id = n.not_id WHERE e.est_id = @estudiante_id AND e.cur_id = @curso_id)", con))
-                    {
-                        // Asigna los nuevos valores a los parámetros
-                        cmd.Parameters.AddWithValue("@nuevo_not_nuno", nNota1);
-                        cmd.Parameters.AddWithValue("@nuevo_not_ndos", nNota2);
-                        cmd.Parameters.AddWithValue("@nuevo_not_ntres", nNota3);
-                        cmd.Parameters.AddWithValue("@nuevo_not_examen", nExamen);
-                        cmd.Parameters.AddWithValue("@estudiante_id", Id_est);
-                        cmd.Parameters.AddWithValue("@curso_id", Id_cur);
+                con.Open();
+                using (SqlCommand cmd = new SqlCommand("UPDATE tbl_nota SET not_nuno = @nuevo_not_nuno, not_ndos = @nuevo_not_ndos, not_ntres = @nuevo_not_ntres, not_examen = @nuevo_not_examen WHERE not_id IN(SELECT n.not_id FROM tbl_estudiante e INNER JOIN tbl_nota n ON e.est_id = n.not_id WHERE e.est_id = @estudiante_id AND e.cur_id = @curso_id)", con))
+                {
+                    // Asigna los nuevos valores a los parámetros
+                    cmd.Parameters.AddWithValue("@nuevo_not_nuno", nNota1);
+                    cmd.Parameters.AddWithValue("@nuevo_not_ndos", nNota2);
+                    cmd.Parameters.AddWithValue("@nuevo_not_ntres", nNota3);
+                    cmd.Parameters.AddWithValue("@nuevo_not_examen", nExamen);
+                    cmd.Parameters.AddWithValue("@estudiante_id", Id_est);
+                    cmd.Parameters.AddWithValue("@curso_id", Id_cur);
 
-                        // Ejecuta la consulta para actualizar los datos
-                        cmd.ExecuteNonQuery();
-                    }
-                
+                    // Ejecuta la consulta para actualizar los datos
+                    cmd.ExecuteNonQuery();
+                }
+
                 ScriptManager.RegisterStartupScript(this, this.GetType(), "showAlert", "mostrarAlerta('Se actualizo con éxito.');", true);
                 limpiar_notas();
             }
@@ -77,7 +77,7 @@ namespace Escuela
         void verificar_alumno()
         {
             // Obtener los valores seleccionados en los DropDownList
-            int id_estudiante = Convert.ToInt32(ddl_nombre.SelectedValue);
+            int id_estudiante = Convert.ToInt32(ddl_nombre.SelectedValue); // Obtener el ID del usuario
             int id_curso = Convert.ToInt32(ddl_curso.SelectedValue);
 
             if (id_estudiante == 0 && id_curso == 0)
@@ -94,16 +94,17 @@ namespace Escuela
             }
             else
             {
-
                 con.Open();
-                SqlCommand cmd = new SqlCommand("SELECT n.not_nuno, n.not_ndos, n.not_ntres, n.not_examen FROM tbl_estudiante e INNER JOIN tbl_nota n ON e.est_id = n.not_id WHERE e.est_id = @es_id AND e.cur_id = @cu_id", con);
-                cmd.Parameters.AddWithValue("@es_id", id_estudiante);
-                cmd.Parameters.AddWithValue("@cu_id", id_curso);
+
+                // Consulta para obtener las notas basadas en el usuario y el curso
+                SqlCommand cmd = new SqlCommand("SELECT n.not_nuno, n.not_ndos, n.not_ntres, n.not_examen FROM tbl_estudiante e INNER JOIN tbl_nota n ON e.est_id = n.not_id WHERE e.est_id = @est_id AND e.cur_id = @cur_id", con);
+                cmd.Parameters.AddWithValue("@est_id", id_estudiante);
+                cmd.Parameters.AddWithValue("@cur_id", id_curso);
+
                 SqlDataReader reader = cmd.ExecuteReader();
 
-                if (reader.HasRows)
+                if (reader.Read())
                 {
-                    reader.Read();
                     // Las notas se encuentran en tbl_nota, asumiendo que esta es la tabla correcta.
                     decimal nota1 = (decimal)reader["not_nuno"];
                     decimal nota2 = (decimal)reader["not_ndos"];
@@ -115,29 +116,14 @@ namespace Escuela
                     txt_n2.Text = nota2.ToString();
                     txt_n3.Text = nota3.ToString();
                     txt_examen.Text = examen.ToString();
-                    con.Close();
                 }
                 else
                 {
-                    con.Close();
-                    con.Open();
-                    // Verificar si el estudiante está en el mismo curso
-                    SqlCommand cursoCmd = new SqlCommand("SELECT COUNT(*) FROM tbl_estudiante WHERE est_id = @es_id AND cur_id = @cu_id", con);
-                    cursoCmd.Parameters.AddWithValue("@es_id", id_estudiante);
-                    cursoCmd.Parameters.AddWithValue("@cu_id", id_curso);
-                    int count = (int)cursoCmd.ExecuteScalar();
-
-                    if (count > 0)
-                    {
-                        ScriptManager.RegisterStartupScript(this, this.GetType(), "showAlert", "mostrarAlerta('Este estudiante no tiene notas registradas. Deben agregarse notas para este estudiante y curso.');", true);
-                    }
-                    else
-                    {
-                        ScriptManager.RegisterStartupScript(this, this.GetType(), "showAlert", "mostrarAlerta('El estudiante no está inscrito en el curso seleccionado.');", true);
-                    }
-                    con.Close();
+                    ScriptManager.RegisterStartupScript(this, this.GetType(), "showAlert", "mostrarAlerta('Este estudiante no tiene notas registradas. Deben agregarse notas para este estudiante y curso.');", true);
                     limpiar_notas();
                 }
+
+                con.Close();
             }
         }
         void cargar_ddl()

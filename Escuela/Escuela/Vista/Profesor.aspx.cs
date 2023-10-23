@@ -26,7 +26,7 @@ namespace Escuela.Vista
             using (SqlConnection con = new SqlConnection(connectionString))
             {
                 con.Open();
-                SqlCommand cmd = new SqlCommand("SELECT u.usu_nombre, c.cur_nombre, n.not_nuno,n.not_ndos,n.not_ntres, n.not_examen FROM tbl_usuario u INNER JOIN tbl_estudiante e ON u.usu_id = e.usu_id INNER JOIN tbl_nota n ON e.est_id = n.not_id INNER JOIN tbl_curso c ON c.cur_id = e.cur_id;", con);
+                SqlCommand cmd = new SqlCommand("SELECT u.usu_nombre, c.cur_nombre, n.not_nuno, n.not_ndos, n.not_ntres, n.not_examen FROM tbl_usuario u INNER JOIN tbl_estudiante e ON u.usu_id = e.usu_id LEFT JOIN tbl_nota n ON e.not_id = n.not_id LEFT JOIN tbl_curso c ON c.cur_id = e.cur_id;", con);
                 SqlDataAdapter da = new SqlDataAdapter(cmd);
                 DataTable dt = new DataTable();
                 da.Fill(dt);
