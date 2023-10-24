@@ -29,6 +29,8 @@
                         <div class="col-md-6">
                             <div class="text-center mb-5">
                                 <br />
+                                <asp:Image ID="img_logo" runat="server" ImageUrl="~/Recurso/img/shool.png" Style="width: 150px;" />
+
                                 <asp:Label class="h3" ID="lbl_registro" runat="server" Text="Editor de Nota"></asp:Label>
                             </div>
                             <div>
@@ -46,6 +48,9 @@
                             </div>
                         </div>
                         <div class="col-md-6">
+                            <br />
+                            <br />
+                            <br />
                             <div>
                                 <asp:Label ID="lbl_n1" runat="server" Text="Nota 1: "></asp:Label>
                                 <asp:TextBox ID="txt_n1" CssClass="form-control" placeholder="Nota" runat="server"></asp:TextBox>

@@ -28,6 +28,8 @@
                     <div class="col-md-12 text-center mb-5">
                         <br />
                         <asp:Label class="h3" ID="lbl_bienvenida" runat="server" Text="Bienvenido/a al Sistema"></asp:Label>
+                        <br />
+                        <asp:Image ID="img_logo" runat="server" ImageUrl="~/Recurso/img/shool.png" Style="width: 150px;" />
                     </div>
                     <div>
                         <asp:Label ID="lbl_correo" runat="server" Text="Correo: "></asp:Label>

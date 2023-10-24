@@ -21,9 +21,11 @@
     <title>Estudiante</title>
 </head>
 <body>
-    <br />
-    <div class="mx-auto font-weight-bold text-black justify-content-center" style="width: 250px">
-        <asp:Label runat="server" CssClass="h2" ID="lbltitulo" Text="Mis Notas" ForeColor="Black"></asp:Label>
+     <div class="d-flex justify-content-between p-3">
+        <asp:Image ID="img_logo" runat="server" ImageUrl="~/Recurso/img/shool.png" Style="width: 75px;" />
+        <div class="mx-auto font-weight-bold text-black justify-content-center" style="width: 250px">
+            <asp:Label runat="server" CssClass="h2" ID="lbltitulo" Text="Mis Notas" ForeColor="Black"></asp:Label>
+        </div>
     </div>
     <br />
     <form id="form_est" runat="server" class="h-50 d-flex align-items-center">

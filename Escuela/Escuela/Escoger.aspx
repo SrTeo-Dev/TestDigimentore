@@ -41,18 +41,17 @@
                 <div class="form-control">
                     <div class="col-md-12 text-center mb-5">
                         <br />
-                        <asp:Label class="h3" ID="lbl_registro" runat="server" Text="Registrate"></asp:Label>
+                        <asp:Label class="h3" ID="lbl_registro" runat="server" Text="Registrate    "></asp:Label>
+                        <asp:Image ID="img_logo" runat="server" ImageUrl="~/Recurso/img/shool.png" Style="width: 150px;" />
                     </div>
                     <div>
                         <asp:Label ID="lbl_nombre" runat="server" Text="Nombre: "></asp:Label>
                         <asp:TextBox ID="txt_nombre" CssClass="form-control" placeholder="Nombre" runat="server"></asp:TextBox>
                     </div>
-                    <br />
                     <div>
                         <asp:Label ID="lbl_correo" runat="server" Text="Correo: "></asp:Label>
                         <asp:TextBox ID="txt_correo" CssClass="form-control" placeholder="Correo" runat="server"></asp:TextBox>
                     </div>
-                    <br />
                     <div>
                         <asp:Label ID="lbl_pass" runat="server" Text="Contraseña: "></asp:Label>
                         <asp:TextBox ID="txt_pass" CssClass="form-control" placeholder="Contraseña" runat="server"></asp:TextBox>
@@ -62,10 +61,9 @@
                         <asp:Label ID="lbl_perfil" runat="server" Text="Perfil: "></asp:Label>
                         <asp:DropDownList ID="cmb_perfil" class="form-select" runat="server" onchange="mostrarOcultarDropDown();" AppendDataBoundItems="True"></asp:DropDownList>
                     </div>
-                    <br />
                     <div>
-                        <asp:Label ID="lbl_curso" runat="server" Text="Curso: " style="display: none;"></asp:Label>
-                        <asp:DropDownList ID="ddl_curso" class="form-select" runat="server" style="display: none;" AppendDataBoundItems="True"></asp:DropDownList>
+                        <asp:Label ID="lbl_curso" runat="server" Text="Curso: " Style="display: none;"></asp:Label>
+                        <asp:DropDownList ID="ddl_curso" class="form-select" runat="server" Style="display: none;" AppendDataBoundItems="True"></asp:DropDownList>
                     </div>
                     <div>
                         <hr />

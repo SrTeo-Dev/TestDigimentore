@@ -29,6 +29,7 @@
                         <div class="col-md-6">
                             <div class="text-center mb-5">
                                 <br />
+                                <asp:Image ID="img_logo" runat="server" ImageUrl="~/Recurso/img/shool.png" Style="width: 150px;" />
                                 <asp:Label class="h3" ID="lbl_estudiante" runat="server" Text="Establacer Estudiante"></asp:Label>
                             </div>
                             <div>

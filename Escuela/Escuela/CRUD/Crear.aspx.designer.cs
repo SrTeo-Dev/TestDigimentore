@@ -24,6 +24,15 @@ namespace Escuela
         protected global::System.Web.UI.HtmlControls.HtmlForm form_crear;
 
         /// <summary>
+        /// Control img_logo.
+        /// </summary>
+        /// <remarks>
+        /// Campo generado automáticamente.
+        /// Para modificarlo, mueva la declaración del campo del archivo del diseñador al archivo de código subyacente.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Image img_logo;
+
+        /// <summary>
         /// Control lbl_estudiante.
         /// </summary>
         /// <remarks>

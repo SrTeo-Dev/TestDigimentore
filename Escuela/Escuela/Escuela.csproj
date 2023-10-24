@@ -97,6 +97,7 @@
     <Content Include="Recurso\img\fondo_profe.jpg" />
     <Content Include="Recurso\img\image.png" />
     <Content Include="Recurso\img\profesor.png" />
+    <Content Include="Recurso\img\shool.png" />
     <Content Include="Recurso\img\usuario.png" />
     <Content Include="Vista\Estudiante.aspx" />
     <Content Include="Vista\Profesor.aspx" />
