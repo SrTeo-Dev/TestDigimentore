@@ -27,6 +27,11 @@
                 <div class="form-control">
                     <div class="row">
                         <div class="col-md-6">
+                            <div class="text-center mb-5">
+                                <br />
+                                <asp:Label class="h3" ID="lbl_subir" runat="server" Text="Subir Nota"></asp:Label>
+                            </div>
+                            <br />
                             <div>
                                 <asp:Label ID="lbl_n1" runat="server" Text="Nota 1: "></asp:Label>
                                 <asp:TextBox ID="txt_n1" CssClass="form-control" placeholder="Nota" runat="server"></asp:TextBox>
@@ -54,7 +59,7 @@
                         <div class="col-md-6">
                             <div class="text-center mb-5">
                                 <br />
-                                <asp:Label class="h3" ID="lbl_subir" runat="server" Text="Subir Nota"></asp:Label>
+                                <asp:Label class="h3" ID="lbl_estudiante" runat="server" Text="Establacer Nota"></asp:Label>
                             </div>
                             <div>
                                 <asp:Label ID="lbl_nombre" runat="server" Text="Nombre: "></asp:Label>
