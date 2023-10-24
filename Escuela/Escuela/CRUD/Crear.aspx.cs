@@ -23,14 +23,9 @@ namespace Escuela
                 cargar_ddl();
             }
         }
-
         protected void btn_regresar_Click(object sender, EventArgs e)
         {
             Response.Redirect("../Vista/Profesor.aspx");
-        }
-        protected void btn_buscar_Click(object sender, EventArgs e)
-        {
-            verificar_alumno();
         }
         protected void btn_subir_Click(object sender, EventArgs e)
         {
