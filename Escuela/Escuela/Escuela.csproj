@@ -90,6 +90,7 @@
     <Content Include="Recurso\CSS\StyleActualiza.css" />
     <Content Include="Recurso\CSS\StyleCrear.css" />
     <Content Include="Recurso\CSS\StyleEscoge.css" />
+    <Content Include="Recurso\CSS\StyleEst.css" />
     <Content Include="Recurso\CSS\StyleProfe.css" />
     <Content Include="Recurso\img\estudiante.png" />
     <Content Include="Recurso\img\fondo.jpg" />

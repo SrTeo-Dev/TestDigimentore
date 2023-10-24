@@ -91,7 +91,7 @@ namespace Escuela
                         }
                         else if (dt.Rows[0]["tusu_id"].ToString() == "4")
                         {
-                            Response.Redirect("Registro.aspx");
+                            Response.Redirect("Vista/Estudiante.aspx");
                         }
                     }
                 }
