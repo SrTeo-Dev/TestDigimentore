@@ -21,6 +21,10 @@ namespace Escuela.Vista
                     string correo = Request.QueryString["correo"].ToString();
                     CargarNotasDelEstudiante(correo);
                 }
+                else
+                {
+                    lblMensaje.Text = "NO TIENES NOTAS AUN, TU PROFESOR TIENE QUE COLOCARLAR";
+                }
             }
         }
         private void CargarNotasDelEstudiante(string correoEstudiante)
