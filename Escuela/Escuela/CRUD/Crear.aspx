@@ -29,6 +29,25 @@
                         <div class="col-md-6">
                             <div class="text-center mb-5">
                                 <br />
+                                <asp:Label class="h3" ID="lbl_estudiante" runat="server" Text="Establacer Estudiante"></asp:Label>
+                            </div>
+                            <div>
+                                <asp:Label ID="lbl_nombre" runat="server" Text="Nombre: "></asp:Label>
+                                <asp:DropDownList ID="ddl_nombre" class="form-select" runat="server" AppendDataBoundItems="True"></asp:DropDownList>
+                            </div>
+                            <br />
+                            <div>
+                                <asp:Label ID="lbl_curso" runat="server" Text="Curso: "></asp:Label>
+                                <asp:DropDownList ID="ddl_curso" class="form-select" runat="server" AppendDataBoundItems="True"></asp:DropDownList>
+                            </div>
+                            <hr />
+                            <div>
+                                <asp:Button ID="btn_alumno" CssClass="btn btn-primary" runat="server" Text="Verifica Alumno" OnClick="btn_alumno_Click" />
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="text-center mb-5">
+                                <br />
                                 <asp:Label class="h3" ID="lbl_subir" runat="server" Text="Subir Nota"></asp:Label>
                             </div>
                             <br />
@@ -53,28 +72,10 @@
                             </div>
                             <hr />
                             <div>
-                                <asp:Button ID="btn_subir" CssClass="btn btn-primary" runat="server" Text="Subir Notas"/>
+                                <asp:Button ID="btn_subir" CssClass="btn btn-primary" runat="server" Text="Subir Notas" OnClick="btn_subir_Click" />
                             </div>
                         </div>
-                        <div class="col-md-6">
-                            <div class="text-center mb-5">
-                                <br />
-                                <asp:Label class="h3" ID="lbl_estudiante" runat="server" Text="Establacer Nota"></asp:Label>
-                            </div>
-                            <div>
-                                <asp:Label ID="lbl_nombre" runat="server" Text="Nombre: "></asp:Label>
-                                <asp:DropDownList ID="ddl_nombre" class="form-select" runat="server" AppendDataBoundItems="True"></asp:DropDownList>
-                            </div>
-                            <br />
-                            <div>
-                                <asp:Label ID="lbl_curso" runat="server" Text="Curso: "></asp:Label>
-                                <asp:DropDownList ID="ddl_curso" class="form-select" runat="server" AppendDataBoundItems="True"></asp:DropDownList>
-                            </div>
-                            <hr />
-                            <div>
-                                <asp:Button ID="btn_alumno" CssClass="btn btn-primary" runat="server" Text="Establecer Alumno" />
-                            </div>
-                        </div>
+
                     </div>
                     <hr />
                     <asp:Button ID="btn_regresar" CssClass="btn btn-primary" runat="server" Text="Regresar" BackColor="#E74C3C" BorderColor="#E74C3C" OnClick="btn_regresar_Click" />

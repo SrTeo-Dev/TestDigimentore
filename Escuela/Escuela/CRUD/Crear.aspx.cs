@@ -12,10 +12,6 @@ namespace Escuela
     public partial class Crear : System.Web.UI.Page
     {
         public SqlConnection con = new SqlConnection(@"workstation id=BD_Escuela.mssql.somee.com;packet size=4096;user id=Mateo2001_SQLLogin_1;pwd=Mateo2001;data source=BD_Escuela.mssql.somee.com;persist security info=False;initial catalog=BD_Escuela");
-        decimal nota1Actual;
-        decimal nota2Actual;
-        decimal nota3Actual;
-        decimal examenActual;
         protected void Page_Load(object sender, EventArgs e)
         {
             if (!Page.IsPostBack)
@@ -29,38 +25,35 @@ namespace Escuela
         }
         protected void btn_subir_Click(object sender, EventArgs e)
         {
-            int idEstudiante = Convert.ToInt32(ddl_nombre.SelectedValue);
-            int idCurso = Convert.ToInt32(ddl_curso.SelectedValue);
-            obtener_notas_actuales(idEstudiante, idCurso);
-            subir_notas(idEstudiante, idCurso);
-
-        }
-
-        #region Metodos
-        void obtener_notas_actuales(int id_estudiante, int id_curso)
-        {
-            con.Open();
-            SqlCommand cmd = new SqlCommand("SELECT n.not_nuno, n.not_ndos, n.not_ntres, n.not_examen FROM tbl_estudiante e INNER JOIN tbl_nota n ON e.est_id = n.not_id WHERE e.est_id = @estudiante_id AND e.cur_id = @curso_id", con);
-            cmd.Parameters.AddWithValue("@estudiante_id", id_estudiante);
-            cmd.Parameters.AddWithValue("@curso_id", id_curso);
-            SqlDataReader reader = cmd.ExecuteReader();
-            if (reader.Read())
+            if (string.IsNullOrEmpty(txt_n1.Text))
             {
-                nota1Actual = reader["not_nuno"] == DBNull.Value ? 0 : (decimal)reader["not_nuno"];
-                nota2Actual = reader["not_ndos"] == DBNull.Value ? 0 : (decimal)reader["not_ndos"];
-                nota3Actual = reader["not_ntres"] == DBNull.Value ? 0 : (decimal)reader["not_ntres"];
-                examenActual = reader["not_examen"] == DBNull.Value ? 0 : (decimal)reader["not_examen"];
+                ScriptManager.RegisterStartupScript(this, this.GetType(), "showAlert", "mostrarAlerta('La Nota 1 esta vacía.');", true);
             }
-            con.Close();
+            else if (string.IsNullOrEmpty(txt_n2.Text))
+            {
+                ScriptManager.RegisterStartupScript(this, this.GetType(), "showAlert", "mostrarAlerta('La Nota 2 esta vacía.');", true);
+            }
+            else if (string.IsNullOrEmpty(txt_n3.Text))
+            {
+                ScriptManager.RegisterStartupScript(this, this.GetType(), "showAlert", "mostrarAlerta('La Nota 3 esta vacía.');", true);
+            }
+            else if (string.IsNullOrEmpty(txt_examen.Text))
+            {
+                ScriptManager.RegisterStartupScript(this, this.GetType(), "showAlert", "mostrarAlerta('El Examen esta vacía.');", true);
+            }
+            else
+            {
+                subir_notas();
+            }
         }
-        void subir_notas(int Id_est, int Id_cur)
+        #region Metodos
+        void subir_notas()
         {
             decimal nNota1 = !string.IsNullOrEmpty(txt_n1.Text) ? Convert.ToDecimal(txt_n1.Text) : 0;
             decimal nNota2 = !string.IsNullOrEmpty(txt_n2.Text) ? Convert.ToDecimal(txt_n2.Text) : 0;
             decimal nNota3 = !string.IsNullOrEmpty(txt_n3.Text) ? Convert.ToDecimal(txt_n3.Text) : 0;
             decimal nExamen = !string.IsNullOrEmpty(txt_examen.Text) ? Convert.ToDecimal(txt_examen.Text) : 0;
 
-            int newNotId = -1;  // Valor predeterminado
             con.Open();
 
             // Insertar en tbl_nota
@@ -70,31 +63,31 @@ namespace Escuela
             cmd.Parameters.AddWithValue("@nuevo_not_ntres", nNota3);
             cmd.Parameters.AddWithValue("@nuevo_not_examen", nExamen);
 
-            SqlCommand getIdCmd = new SqlCommand("SELECT SCOPE_IDENTITY()", con);
-            object result = getIdCmd.ExecuteScalar();
-            if (result != null && result != DBNull.Value)
+
+            if (cmd.ExecuteNonQuery() > 0)
             {
-                newNotId = Convert.ToInt32(result);
+                ScriptManager.RegisterStartupScript(this, this.GetType(), "showAlert", "mostrarAlerta('Las notas se subieron con éxito.');", true);
 
-                SqlCommand updateEstudianteCmd = new SqlCommand("UPDATE tbl_estudiante SET not_id = @notId WHERE est_id = @estudianteId", con);
-                updateEstudianteCmd.Parameters.AddWithValue("@notId", newNotId);
-                updateEstudianteCmd.Parameters.AddWithValue("@estudianteId", Id_est);
-
-                int rowsAffected = cmd.ExecuteNonQuery();
-                // Obtener el nuevo not_id insertado
-
-                if (rowsAffected > 0)
+                // Después de insertar la nota con éxito, obtén el último ID insertado usando SELECT SCOPE_IDENTITY().
+                SqlCommand getIdCmd = new SqlCommand("SELECT TOP 1 not_id FROM tbl_nota ORDER BY not_id DESC", con);
+                object result = getIdCmd.ExecuteScalar();
+                if (result != DBNull.Value)
                 {
-                    ScriptManager.RegisterStartupScript(this, this.GetType(), "showAlert", "mostrarAlerta('Notas actualizadas con éxito.');", true);
-
+                    int newNotId = Convert.ToInt32(result);
+                    con.Close();
+                    // Llama a la función para establecer el ID de la nota en la tabla del estudiante.
+                    EstablecerIdNotaEnEstudiante(newNotId);
                 }
                 else
                 {
-                    ScriptManager.RegisterStartupScript(this, this.GetType(), "showAlert", "mostrarAlerta('Error al actualizar las notas.');", true);
+                    ScriptManager.RegisterStartupScript(this, this.GetType(), "showAlert", "mostrarAlerta('Error al establecer la nota la nota.');", true);
                 }
-            }
 
-           
+            }
+            else
+            {
+                ScriptManager.RegisterStartupScript(this, this.GetType(), "showAlert", "mostrarAlerta('Error al subir las notas.');", true);
+            }
 
             con.Close();
         }
@@ -126,10 +119,41 @@ namespace Escuela
             ddl_curso.DataBind();
             con.Close();
         }
-        void verificar_alumno()
+        void limpiar_notas()
+        {
+            txt_n1.Text = txt_n2.Text = txt_n3.Text = txt_examen.Text = "";
+        }
+        void EstablecerIdNotaEnEstudiante(int notaId)
+        {
+            int estudianteId = Convert.ToInt32(ddl_nombre.SelectedValue);
+            int cursoId = Convert.ToInt32(ddl_curso.SelectedValue);
+            con.Open();
+
+            // Actualiza el campo not_id del estudiante con el nuevo ID de nota.
+            SqlCommand updateEstudianteCmd = new SqlCommand("UPDATE tbl_estudiante SET not_id = @notId WHERE est_id = @estudianteId AND cur_id = @cursoId", con);
+            updateEstudianteCmd.Parameters.AddWithValue("@notId", notaId);
+            updateEstudianteCmd.Parameters.AddWithValue("@estudianteId", estudianteId);
+            updateEstudianteCmd.Parameters.AddWithValue("@cursoId", cursoId);
+
+            int updateRows = updateEstudianteCmd.ExecuteNonQuery();
+
+            if (updateRows > 0)
+            {
+                ScriptManager.RegisterStartupScript(this, this.GetType(), "showAlert", "mostrarAlerta('El ID de nota se asignó al estudiante correctamente.');", true);
+            }
+            else
+            {
+                ScriptManager.RegisterStartupScript(this, this.GetType(), "showAlert", "mostrarAlerta('Error al asignar el ID de nota al estudiante.');", true);
+            }
+            con.Close();
+        }
+
+        #endregion
+
+        protected void btn_alumno_Click(object sender, EventArgs e)
         {
             // Obtener los valores seleccionados en los DropDownList
-            int id_estudiante = Convert.ToInt32(ddl_nombre.SelectedValue);
+            int id_estudiante = Convert.ToInt32(ddl_nombre.SelectedValue); // Obtener el ID del usuario
             int id_curso = Convert.ToInt32(ddl_curso.SelectedValue);
 
             if (id_estudiante == 0 && id_curso == 0)
@@ -146,16 +170,17 @@ namespace Escuela
             }
             else
             {
-
                 con.Open();
-                SqlCommand cmd = new SqlCommand("SELECT n.not_nuno, n.not_ndos, n.not_ntres, n.not_examen FROM tbl_estudiante e INNER JOIN tbl_nota n ON e.est_id = n.not_id WHERE e.est_id = @es_id AND e.cur_id = @cu_id", con);
-                cmd.Parameters.AddWithValue("@es_id", id_estudiante);
-                cmd.Parameters.AddWithValue("@cu_id", id_curso);
+
+                // Consulta para obtener las notas basadas en el usuario y el curso
+                SqlCommand cmd = new SqlCommand("SELECT n.not_nuno, n.not_ndos, n.not_ntres, n.not_examen FROM tbl_estudiante e INNER JOIN tbl_nota n ON e.est_id = n.not_id WHERE e.est_id = @est_id AND e.cur_id = @cur_id", con);
+                cmd.Parameters.AddWithValue("@est_id", id_estudiante);
+                cmd.Parameters.AddWithValue("@cur_id", id_curso);
+
                 SqlDataReader reader = cmd.ExecuteReader();
 
-                if (reader.HasRows)
+                if (reader.Read())
                 {
-                    reader.Read();
                     // Las notas se encuentran en tbl_nota, asumiendo que esta es la tabla correcta.
                     decimal nota1 = (decimal)reader["not_nuno"];
                     decimal nota2 = (decimal)reader["not_ndos"];
@@ -167,36 +192,15 @@ namespace Escuela
                     txt_n2.Text = nota2.ToString();
                     txt_n3.Text = nota3.ToString();
                     txt_examen.Text = examen.ToString();
-                    con.Close();
                 }
                 else
                 {
-                    con.Close();
-                    con.Open();
-                    // Verificar si el estudiante está en el mismo curso
-                    SqlCommand cursoCmd = new SqlCommand("SELECT COUNT(*) FROM tbl_estudiante WHERE est_id = @es_id AND cur_id = @cu_id", con);
-                    cursoCmd.Parameters.AddWithValue("@es_id", id_estudiante);
-                    cursoCmd.Parameters.AddWithValue("@cu_id", id_curso);
-                    int count = (int)cursoCmd.ExecuteScalar();
-
-                    if (count > 0)
-                    {
-                        ScriptManager.RegisterStartupScript(this, this.GetType(), "showAlert", "mostrarAlerta('Este estudiante no tiene notas registradas. Deben agregarse notas para este estudiante y curso.');", true);
-                    }
-                    else
-                    {
-                        ScriptManager.RegisterStartupScript(this, this.GetType(), "showAlert", "mostrarAlerta('El estudiante no está inscrito en el curso seleccionado.');", true);
-                    }
-                    con.Close();
+                    ScriptManager.RegisterStartupScript(this, this.GetType(), "showAlert", "mostrarAlerta('Este estudiante no tiene notas registradas. Deben agregarse notas para este estudiante y curso.');", true);
                     limpiar_notas();
                 }
+
+                con.Close();
             }
         }
-        void limpiar_notas()
-        {
-            txt_n1.Text = txt_n2.Text = txt_n3.Text = txt_examen.Text = "";
-        }
-        #endregion
-
     }
 }
