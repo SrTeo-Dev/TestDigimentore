@@ -30,16 +30,10 @@
         <br />
         <div class="container">
             <div class="table m-4">
-                <asp:GridView runat="server" ID="gvusuarios" class="table table-borderless table-hover">
+                <asp:GridView runat="server" ID="gv_notas" class="table table-borderless table-hover">
                     <Columns>
                     </Columns>
                 </asp:GridView>
-            </div>
-            <div class="row-cols-auto">
-                <div class="col m-5">
-                    <asp:Button runat="server" ID="btn_crear" CssClass="btn btn-success form-control-sm btn-margin" Text="Crear" />
-                    <asp:Button runat="server" ID="btn_actualizar" CssClass="btn form-control-sm btn-warning btn-margin" Text="Editar"/>
-                </div>
             </div>
             <div>
                 <asp:Label ID="lblMensaje" runat="server" Text=""></asp:Label>

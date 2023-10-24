@@ -91,8 +91,10 @@ namespace Escuela
                         }
                         else if (dt.Rows[0]["tusu_id"].ToString() == "4")
                         {
-                            Response.Redirect("Vista/Estudiante.aspx");
+                            string correoEstudiante = dt.Rows[0]["usu_correo"].ToString(); // Cambia el nombre de la variable
+                            Response.Redirect("Vista/Estudiante.aspx?correo=" + correoEstudiante);
                         }
+
                     }
                 }
             }
